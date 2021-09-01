@@ -1,5 +1,5 @@
 export const zh = {
-    closingPrice: "收盤價",
+    closePrice: "收盤價",
     high: "當日最高價",
     low: "當日最低價",
     openPrice: "開盤價",
