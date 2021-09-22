@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Chart, registerables} from "chart.js";
 import { values } from "lodash";
 import { zh } from "./lang";
 import { Stock } from "./type";
@@ -15,7 +16,169 @@ class Main {
         this.fetchStockData().then(() => {
             this.updateTable(1);
         });
+        Chart.register(...registerables)
+  
+        this.StockDataCanvas()
     }
+    /*
+    * 繪製圖表
+    */
+    private async StockDataCanvas() {
+        // const ctx3 = (document.getElementById("myChart") as HTMLCanvasElement).getContext("2d");
+
+        // const chartColors = {
+        //     red: 'rgb(255, 99, 132)',
+        //     orange: 'rgb(255, 159, 64)',
+        //     yellow: 'rgb(255, 205, 86)',
+        //     green: 'rgb(51, 204, 51)',
+        //     blue: 'rgb(54, 162, 235)',
+        //     purple: 'rgb(153, 102, 255)',
+        //     grey: 'rgb(201, 203, 207)'
+        // };
+        // const example3 = new Chart(ctx3, {
+        //     type: 'line',
+        //     data: {
+        //         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        //         datasets: [{
+        //             label: 'My First dataset',
+        //             backgroundColor: chartColors.red,
+        //             borderColor: chartColors.red,
+        //             data: [10, 30, 39, 20, 25, 34, -10],
+        //             fill: false,
+        //         }, {
+        //             label: 'My Second dataset',
+        //             fill: false,
+        //             backgroundColor: chartColors.blue,
+        //             borderColor: chartColors.blue,
+        //             data: [18, 33, 22, 19, 11, 39, 30],
+        //         }]
+        //     },
+
+        // });
+
+       
+
+      
+
+        const ctx = (document.getElementById("myChart") as HTMLCanvasElement).getContext("2d");
+        // 參數設定[註1]
+        const example = new Chart(ctx, {
+            type: "bar", // 圖表類型
+
+
+            data: {
+                labels: [ "Red", "Green", "Blue" ], // 標題
+                datasets: [{
+                    label: "# of Votes", // 標籤
+                    data: [ 12, 19, 3 ], // 資料
+                    backgroundColor: [ // 背景色
+                    "#FF0000",
+                    "#00FF00",
+                    "#0000FF",
+                    ],
+                    borderWidth: 1 // 外框寬度
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+       
+ 
+
+
+        // const ctx2 = (document.getElementById("myChart") as HTMLCanvasElement).getContext("2d");
+        // var myChart = new Chart(ctx2, {
+        //     type: 'bar',
+        //     data: {
+        //         labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        //         datasets: [{
+        //             label: '# of Votes',
+        //             data: [12, 19, 3, 5, 2, 3],
+        //             backgroundColor: [
+        //                 'rgba(255, 99, 132, 0.2)',
+        //                 'rgba(54, 162, 235, 0.2)',
+        //                 'rgba(255, 206, 86, 0.2)',
+        //                 'rgba(75, 192, 192, 0.2)',
+        //                 'rgba(153, 102, 255, 0.2)',
+        //                 'rgba(255, 159, 64, 0.2)'
+        //             ],
+        //             borderColor: [
+        //                 'rgba(255, 99, 132, 1)',
+        //                 'rgba(54, 162, 235, 1)',
+        //                 'rgba(255, 206, 86, 1)',
+        //                 'rgba(75, 192, 192, 1)',
+        //                 'rgba(153, 102, 255, 1)',
+        //                 'rgba(255, 159, 64, 1)'
+        //             ],
+        //             borderWidth: 1
+        //         }]
+        //     },
+        //     options: {
+        //         scales: {
+        //             y: {
+        //                 beginAtZero: true
+        //             }
+        //         }
+        //     }
+        // });
+
+        // const ctx = (document.getElementById('myChart') as HTMLCanvasElement).getContext("2d");
+        // const data = {
+        //     labels: labels,
+        //     datasets: [
+        //       {
+        //         label: 'Dataset 1',
+        //         data: [10, 30, 50, 20, 25, 44, -10],
+        //         borderColor: Utils.CHART_COLORS.red,
+        //         backgroundColor: Utils.CHART_COLORS.red,
+        //       },
+        //       {
+        //         label: 'Dataset 2',
+        //         data: [100, 33, 22, 19, 11, 49, 30],
+        //         borderColor: Utils.CHART_COLORS.blue,
+        //         backgroundColor: Utils.CHART_COLORS.blue,
+        //       }
+        //     ]
+        //   };
+
+        // const config = {
+        //     type: 'line',
+        //     data: data,
+        //     options: {
+        //       responsive: true,
+        //       plugins: {
+        //         title: {
+        //           display: true,
+        //           text: 'Min and Max Settings'
+        //         }
+        //       },
+        //       scales: {
+        //         y: {
+        //           min: 10,
+        //           max: 50,
+        //         }
+        //       }
+        //     },
+        //   };
+          
+          
+        // const myChart = new Chart(ctx, {
+        //     options:{
+        //         title:{
+        //             display:true,
+        //             text:"hello world",
+        //             fontColor:'red'
+        //         }
+        //     }
+        // }); 
+       
+    } 
 
     /**
      * 從後端取得股票資訊，並更新頁碼 (只會做一次)
@@ -46,36 +209,43 @@ class Main {
             //TODO 這裡可以改寫成方法重複調用
             if (page) {
                 //console.log(typeof page)
-                
+                document.getElementById(`button${tempPage}`).classList.remove("mystyle");
                 this.updateTable(page);
                 tempPage = page;
                 console.log(tempPage);
+                document.getElementById(`button${page}`).classList.add("mystyle");
                 //TODO
             }
             
             if((event.target as HTMLElement).innerHTML === "下一頁"){
                 console.log(tempPage);
-
+                document.getElementById(`button${tempPage}`).classList.remove("mystyle");
+                
                 
                 if(tempPage < Math.ceil(this._stock.length / this._numRows) - 1)
                 this.updateTable(++tempPage);
-  
+
+                document.getElementById(`button${tempPage}`).classList.add("mystyle");
             }
 
             if((event.target as HTMLElement).innerHTML === "上一頁"){
                 console.log(tempPage);
-
+                document.getElementById(`button${tempPage}`).classList.remove("mystyle");
+                
                 if(tempPage < Math.ceil(this._stock.length / this._numRows) && tempPage > 1)
                 this.updateTable(--tempPage);
-  
+
+                document.getElementById(`button${tempPage}`).classList.add("mystyle");
             }
             //NOTE 為什麼不能蓋過原本的background
             console.log(page);
-            document.getElementById(`button${page}`).classList.add("mystyle");
+            
+            
 
             //this.updateTable(page);
 
             }
+            
         );
 
 
@@ -84,23 +254,31 @@ class Main {
             div_search.addEventListener("click", event => {
                 //TODO swithch
                 const selectResult = (event.target as HTMLElement).innerHTML;
-
+                // 用於尋找html data命名 console.log((event.target as any).dataset.volume)
                 switch(selectResult){
                     case "成交量 &gt; 6000":
                         this._searchResult = this._stock.filter(v => v.volume >= 6000)
                         this.updatePage();
                         this.updateTable(1);
+                        tempPage = 1;
                         console.log("查詢條件 成交量 > 6000")
                         break;
                     case "外資買超 &gt; 500":
-                        this._searchResult = this._stock.filter(v => v.foreignInvestors >= 500)
+                        // filter篩選資料後用sort將資料由大到小排序
+                        this._searchResult = this._stock.filter(v => v.foreignInvestors >= 500).sort(function (a, b) {
+                            return a.foreignInvestors < b.foreignInvestors ? 1 : -1;
+                           });
+                        console.log(this._searchResult)
+
                         this.updatePage();
                         this.updateTable(1);
+                        tempPage = 1;
                         break;
                     case "投信買超 &gt; 500":
                         this._searchResult = this._stock.filter(v => v.investmentTrust >= 500)
                         this.updatePage();
                         this.updateTable(1);
+                        tempPage = 1;
                         break;
                     case "強勢股":
                         //漲3%
@@ -199,6 +377,7 @@ class Main {
                 div_pages.appendChild(next); 
             }
         }
+        document.getElementById(`button${1}`).classList.add("mystyle");
     }
 
     /**
