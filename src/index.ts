@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Chart, registerables} from "chart.js";
-import { values } from "lodash";
+import { result, values } from "lodash";
 import { zh } from "./lang";
 import { Stock } from "./type";
 
@@ -24,8 +24,121 @@ class Main {
     * 繪製圖表
     */
     private async StockDataCanvas() {
-        // const ctx3 = (document.getElementById("myChart") as HTMLCanvasElement).getContext("2d");
+        //const reuslt = await axios.get<Stock[]>("https://cors-anywhere.herokuapp.com/https://www.twse.com.tw/exchangeReport/MI_INDEX?response=JSON&date=20210824&type=ALLBUT0999")
+        
 
+        console.log(result);
+        const myData = [16460, 16488, 16522, 16500, 16652, 16513]
+        const myAxis = [] as string[];
+
+        let startTime = new Date('2021-01-01 09:00:00');
+        let endTime = new Date('2021-01-01 13:30:00');
+        for (let i = startTime; startTime < endTime; startTime.getSeconds() + 10){
+            startTime.setSeconds(startTime.getSeconds() + 10);
+            myAxis.push(startTime.toString().slice(16,24));    
+        }
+        console.log(myAxis);
+
+        const ctx3 = (document.getElementById("myChart") as HTMLCanvasElement).getContext("2d");
+        
+        const chartColors = {
+            red: 'rgb(255, 99, 132)',
+            orange: 'rgb(255, 159, 64)',
+            yellow: 'rgb(255, 205, 86)',
+            green: 'rgb(51, 204, 51)',
+            blue: 'rgb(54, 162, 235)',
+            purple: 'rgb(153, 102, 255)',
+            grey: 'rgb(201, 203, 207)'
+        };
+        const example3 = new Chart(ctx3, {
+            type: 'line',
+            data: {
+                labels: myAxis,
+                datasets: [{
+                    label: '加權指數',
+                    backgroundColor: chartColors.red,
+                    borderColor: chartColors.red,
+                    data: myData,
+                    fill: false,
+                },]
+            },
+            options:{
+                scales: {
+                    xAxis:{
+                        ticks:{
+                            maxTicksLimit:6
+                        }
+                    },
+                    yAxes: {
+                        min: 16000,
+                        max: 17000,
+                        ticks: {
+                            stepSize: 500
+                        }
+                    }
+                },
+        }});
+
+        // 基本hello world
+        // const myChart = new Chart(ctx3, {
+        //     type: 'line',
+        //     data: {
+        //         labels: [],
+        //         datasets: []
+        //     }, 
+               
+            
+        //     options:{
+        //         scales: {
+        //             xAxis:{
+        //                 ticks:{
+
+        //                 }
+        //             }
+        //         },
+        //         plugins:{                
+        //             title:{
+        //             display:true,
+        //             text:"hello world",
+        //             color:'red'
+        //             }
+
+        //         }
+        //     } 
+        // }); 
+
+      
+        //長條圖案例 可用
+        // const ctx = (document.getElementById("myChart") as HTMLCanvasElement).getContext("2d");
+        // // 參數設定[註1]
+        // const example = new Chart(ctx, {
+        //     type: "bar", // 圖表類型
+
+
+        //     data: {
+        //         labels: [ "Red", "Green", "Blue" ], // 標題
+        //         datasets: [{
+        //             label: "# of Votes", // 標籤
+        //             data: [ 12, 19, 3 ], // 資料
+        //             backgroundColor: [ // 背景色
+        //             "#FF0000",
+        //             "#00FF00",
+        //             "#0000FF",
+        //             ],
+        //             borderWidth: 1 // 外框寬度
+        //         }]
+        //     },
+        //     options: {
+        //         scales: {
+        //             y: {
+        //                 beginAtZero: true
+        //             }
+        //         }
+        //     }
+        // });
+
+       
+        // 原始範例2
         // const chartColors = {
         //     red: 'rgb(255, 99, 132)',
         //     orange: 'rgb(255, 159, 64)',
@@ -55,41 +168,6 @@ class Main {
         //     },
 
         // });
-
-       
-
-      
-
-        const ctx = (document.getElementById("myChart") as HTMLCanvasElement).getContext("2d");
-        // 參數設定[註1]
-        const example = new Chart(ctx, {
-            type: "bar", // 圖表類型
-
-
-            data: {
-                labels: [ "Red", "Green", "Blue" ], // 標題
-                datasets: [{
-                    label: "# of Votes", // 標籤
-                    data: [ 12, 19, 3 ], // 資料
-                    backgroundColor: [ // 背景色
-                    "#FF0000",
-                    "#00FF00",
-                    "#0000FF",
-                    ],
-                    borderWidth: 1 // 外框寬度
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-
-       
- 
 
 
         // const ctx2 = (document.getElementById("myChart") as HTMLCanvasElement).getContext("2d");
