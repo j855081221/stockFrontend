@@ -6,7 +6,8 @@ import { Stock } from "./type";
 
 class Main {
     private tb_stock = document.getElementById("tb_stock") as HTMLTableElement;
-   
+    //定義chart的資料型別 及內容
+    private _chart = [] ; 
 
     private _stock = [] as Stock[];
     private _numRows = 25;
@@ -25,17 +26,46 @@ class Main {
     */
     private async StockDataCanvas() {
         //const reuslt = await axios.get<Stock[]>("https://cors-anywhere.herokuapp.com/https://www.twse.com.tw/exchangeReport/MI_INDEX?response=JSON&date=20210824&type=ALLBUT0999")
-        
+        this._chart = (await axios.get<Stock[]>("https://script.google.com/macros/s/AKfycbyRQfFMiKTmsbBCqmqdo11gVh6PzPTqWt7mgV-wbFzNpzUQBgBEMGe6_1ajKUkJVTsO/exec?func=chart")).data;
 
-        console.log(result);
-        const myData = [16460, 16488, 16522, 16500, 16652, 16513]
+        //console.log(result);
+        const myData = [16460, 16488, 16522, 16500, 16652, 16513,16560, 16388, 16422, 16305, 16658, 16713,]
+        // const myPoint = Object.keys(this._chart).map(key => this._chart[key]);
+        // console.log(myPoint);
+
+        // let object = {a: 1, b: 2, c: 3};
+        // Object.values(object).forEach(key => {
+        //   console.log(key);
+        // });
+
+        let arr2 = [];
+        this._chart.forEach((item, index, array) => {
+        arr2.push(parseFloat(array[index].point))
+        });
+        console.log(arr2);
+        let arr3 = arr2.slice(2,100);
+        console.log(arr3)
+
         const myAxis = [] as string[];
 
         let startTime = new Date('2021-01-01 09:00:00');
         let endTime = new Date('2021-01-01 13:30:00');
-        for (let i = startTime; startTime < endTime; startTime.getSeconds() + 10){
-            startTime.setSeconds(startTime.getSeconds() + 10);
-            myAxis.push(startTime.toString().slice(16,24));    
+        // 建議改用while迴圈比較好
+        let timeCount = 720;
+
+        for (let i = startTime; startTime < endTime; startTime.getSeconds() + 5){
+
+            if(timeCount === 720){
+                myAxis.push(startTime.toString().slice(16,24));
+                timeCount = 0
+            }
+            
+            else
+            myAxis.push("");
+
+            startTime.setSeconds(startTime.getSeconds() + 5);
+            
+            timeCount += 1  
         }
         console.log(myAxis);
 
@@ -58,22 +88,25 @@ class Main {
                     label: '加權指數',
                     backgroundColor: chartColors.red,
                     borderColor: chartColors.red,
-                    data: myData,
+                    data: arr2,
                     fill: false,
-                },]
+                    pointRadius: 0,
+                }]
             },
             options:{
                 scales: {
                     xAxis:{
                         ticks:{
-                            maxTicksLimit:6
+                            //maxTicksLimit:12,
+                            stepSize: 720,
+                            count: 10,
                         }
                     },
-                    yAxes: {
-                        min: 16000,
+                    yAxis: {
+                        min: 16800,
                         max: 17000,
                         ticks: {
-                            stepSize: 500
+                            stepSize: 100
                         }
                     }
                 },
@@ -263,8 +296,10 @@ class Main {
      */
     private async fetchStockData() {
         // 從後端取得資料
-        this._stock = (await axios.get<Stock[]>("https://script.google.com/macros/s/AKfycbxuUm9TOuFVD-ZsnsADxD0B7bSW3sN5D6Cy7K0ANI7Tu8QrjLlyZsUwQDxz8fT4Wmu7/exec?func=all")).data;
+         this._stock = (await axios.get<Stock[]>("https://script.google.com/macros/s/AKfycbxMVYTV4sGIrM2hAspPsOrVYwIYPC0c-jYo6WpMUf8FMYRjcRqgdUE5EePWyW-bBqH3/exec?func=all")).data;
+        // this._stock = (await axios.get<Stock[]>("https://script.google.com/macros/s/AKfycbxMVYTV4sGIrM2hAspPsOrVYwIYPC0c-jYo6WpMUf8FMYRjcRqgdUE5EePWyW-bBqH3/exec?func=time")).data;
 
+         console.log(this._stock)
         // 關閉 Loading 動畫
         const loading = document.getElementById("lds-container") as HTMLDivElement;
         document.body.removeChild(loading);
