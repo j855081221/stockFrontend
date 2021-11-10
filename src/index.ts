@@ -7,7 +7,8 @@ import { Stock } from "./type";
 class Main {
     private tb_stock = document.getElementById("tb_stock") as HTMLTableElement;
     //定義chart的資料型別 及內容
-    private _chart = [] ; 
+    private _chart = []; 
+    private _OTCchart = []; 
 
     private _stock = [] as Stock[];
     private _numRows = 25;
@@ -26,9 +27,9 @@ class Main {
     */
     private async StockDataCanvas() {
         //const reuslt = await axios.get<Stock[]>("https://cors-anywhere.herokuapp.com/https://www.twse.com.tw/exchangeReport/MI_INDEX?response=JSON&date=20210824&type=ALLBUT0999")
-        this._chart = (await axios.get<Stock[]>("https://script.google.com/macros/s/AKfycbyRQfFMiKTmsbBCqmqdo11gVh6PzPTqWt7mgV-wbFzNpzUQBgBEMGe6_1ajKUkJVTsO/exec?func=chart")).data;
-
-        //console.log(result);
+        this._chart = (await axios.get<Stock[]>("https://script.google.com/macros/s/AKfycbzy9Owb62bjEEeRunQUtN1a5cGJ-lty4bPIEEIhrEDWJCotT9VH9DKf8GOulZ5RioIt/exec?func=chart")).data;
+        this._OTCchart = (await axios.get<Stock[]>("https://script.google.com/macros/s/AKfycbzy9Owb62bjEEeRunQUtN1a5cGJ-lty4bPIEEIhrEDWJCotT9VH9DKf8GOulZ5RioIt/exec?func=OTCchart")).data;
+        console.log(this._chart);
         const myData = [16460, 16488, 16522, 16500, 16652, 16513,16560, 16388, 16422, 16305, 16658, 16713,]
         // const myPoint = Object.keys(this._chart).map(key => this._chart[key]);
         // console.log(myPoint);
@@ -45,6 +46,16 @@ class Main {
         console.log(arr2);
         let arr3 = arr2.slice(2,100);
         console.log(arr3)
+
+        let arrOTC = [];
+        this._OTCchart.forEach((item, index, array) => {
+            arrOTC.push(parseFloat(array[index].point))
+            });
+            console.log(arrOTC);
+            let OTCdata = arrOTC.slice(2,100);
+            console.log(OTCdata)
+    
+
 
         const myAxis = [] as string[];
 
@@ -70,6 +81,7 @@ class Main {
         console.log(myAxis);
 
         const ctx3 = (document.getElementById("myChart") as HTMLCanvasElement).getContext("2d");
+        const ctx4 = (document.getElementById("OTCmyChart") as HTMLCanvasElement).getContext("2d");
         
         const chartColors = {
             red: 'rgb(255, 99, 132)',
@@ -107,6 +119,38 @@ class Main {
                         max: 17000,
                         ticks: {
                             stepSize: 100
+                        }
+                    }
+                },
+        }});
+
+        const example4 = new Chart(ctx4, {
+            type: 'line',
+            data: {
+                labels: myAxis,
+                datasets: [{
+                    label: '櫃買指數',
+                    backgroundColor: chartColors.purple,
+                    borderColor: chartColors.purple,
+                    data: arrOTC,
+                    fill: false,
+                    pointRadius: 0,
+                }]
+            },
+            options:{
+                scales: {
+                    xAxis:{
+                        ticks:{
+                            //maxTicksLimit:12,
+                            stepSize: 720,
+                            count: 10,
+                        }
+                    },
+                    yAxis: {
+                        min: 210,
+                        max: 225,
+                        ticks: {
+                            stepSize: 2
                         }
                     }
                 },
@@ -296,7 +340,7 @@ class Main {
      */
     private async fetchStockData() {
         // 從後端取得資料
-         this._stock = (await axios.get<Stock[]>("https://script.google.com/macros/s/AKfycbxMVYTV4sGIrM2hAspPsOrVYwIYPC0c-jYo6WpMUf8FMYRjcRqgdUE5EePWyW-bBqH3/exec?func=all")).data;
+         this._stock = (await axios.get<Stock[]>("https://script.google.com/macros/s/AKfycbzy9Owb62bjEEeRunQUtN1a5cGJ-lty4bPIEEIhrEDWJCotT9VH9DKf8GOulZ5RioIt/exec?func=all")).data;
         // this._stock = (await axios.get<Stock[]>("https://script.google.com/macros/s/AKfycbxMVYTV4sGIrM2hAspPsOrVYwIYPC0c-jYo6WpMUf8FMYRjcRqgdUE5EePWyW-bBqH3/exec?func=time")).data;
 
          console.log(this._stock)
